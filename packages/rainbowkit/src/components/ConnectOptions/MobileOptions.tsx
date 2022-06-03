@@ -44,10 +44,22 @@ function WalletButton({ wallet }: { wallet: WalletConnector }) {
 
         onConnecting?.(async () => {
           if (getMobileUri) {
-            window.location.href = await getMobileUri();
+            const mobileUri = await getMobileUri();
+
+            if (mobileUri.includes('?uri=')) {
+              window.localStorage.setItem(
+                'WALLETCONNECT_DEEPLINK_CHOICE',
+                JSON.stringify({
+                  href: mobileUri.split('?')[0],
+                  name,
+                })
+              );
+            }
+
+            window.open(mobileUri, '_blank');
           }
         });
-      }, [connect, getMobileUri, onConnecting])}
+      }, [connect, getMobileUri, onConnecting, name])}
       ref={coolModeRef}
       style={{ overflow: 'visible', textAlign: 'center' }}
       type="button"
